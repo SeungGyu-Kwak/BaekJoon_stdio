@@ -1,0 +1,115 @@
+DP 백준 알고리즘 문제 풀이
+
+1. 1463문제 
+"""
+정수 X에 사용할 수 있는 연산은 다음과 같이 세 가지이다.
+1. X가 3으로 나누어 떨어지면, 3으로 나눈다.
+2. X가 2로 나누어 떨어지면, 2로 나눈다.
+3. 1을 뺀다.
+정수 N이 주어졌을 때, 위와 같은 연산 세 개를 적절히 사용해서 1을 만들려고 한다. 연산을 사용하는 횟수의 최솟값을 출력하시요.
+"""
+n = int(input())
+
+count = 0
+while(True):
+    if n % 3 == 0:
+        n = int(n / 3)
+        print("3으로 나눴습니다. n = {}".format(n))
+        count += 1
+    elif n % 2 == 0:
+        n = int(n / 2)
+        print("2로 나눴습니다. n = {}".format(n))
+        count += 1
+    else:
+        n = int(n - 1)
+        print("1을 뺐습니다. n = {}".format(n))
+        count += 1
+    if n == 1:
+        break
+처음엔 단순하게 반복문과 조건문을 통해 제출하였지만 틀렸다고 했다. 왜 틀렸는지 확인을 해보니깐 위의 코드로 10을 넣어서 돌려보면 count = 4가 나온다. 
+문제에서는 그저 1을 만드는 것이 아니라 3가지 연산을 통해서 최소로 1을 만들 수 있는 최솟값을 출력하라고 했다. 
+다시 수정!
+우리는 리스트를 이용해서 bottom-up을 통해 나오는 값들을 다 저장한다.
+
+def cal(a):
+    list_a = []
+    for i in a:
+        list_a.append(i-1)
+        if i%3 == 0:
+            list_a.append(i/3)
+        if i%2 == 0:
+            list_a.append(i/2)
+    return list_a
+
+3가지 연산을 통해 나올 수 있는 값들을 하나의 배열에 저장을 해서 그 배열에 우리가 원하는 1이 있다면 count한 값을 출력해서 최소 연산 수를 도출한다.
+
+
+2. 11726 문제
+"""
+2×n 크기의 직사각형을 1×2, 2×1 타일로 채우는 방법의 수를 구하는 프로그램을 작성하시오.
+아래 그림은 2×5 크기의 직사각형을 채운 한 가지 방법의 예이다
+"""
+이번 문제는 직사각형을 5개까지 그려서 규칙을 찾아보았다.
+1일 때 1개, 2일 때 2개, 3일 때 3개, 4일 때 5개, 5일 때 8개가 나와서 점화식을 세울 수 있었다.
+ary[i] = ary[i-2] + ary[i-1], i = 1 and i = 0일 때는 ary[i] = 1
+따라서 이것을 통해 문제를 풀었다.
+
+n = int(input())
+ary = []
+for i in range(n+1):
+    if i == 0:
+        ary.append(1)
+    elif i == 1:
+        ary.append(1)
+    else:
+        ary.append(ary[i-2] + ary[i-1])
+
+
+
+3. 11727 문제
+"""
+2×n 직사각형을 1×2, 2×1과 2×2 타일로 채우는 방법의 수를 구하는 프로그램을 작성하시오.
+아래 그림은 2×17 직사각형을 채운 한가지 예이다.
+"""
+11726문제와 비슷하지만 이번문제는 2x2타일이 추가가 되었다. 이 문제 역시 규칙을 찾아보면 하나의 점화식을 세울 수 있다.
+ary[i] = ary[i-1] + ary[i-2]*2
+즉, 이 점화식만 세운다면 dp를 이용해 문제를 해결할 수 있다.
+n = int(input())
+ary = []
+for i in range(n+1):
+    if i == 0 or i == 1:
+        ary.append(1)
+    else:
+        ary.append(ary[i-1] + ary[i-2]*2)
+
+result = ary[n]
+print(result % 10007)
+
+
+4. 9095 문제
+"""
+정수 4를 1, 2, 3의 합으로 나타내는 방법은 총 7가지가 있다. 합을 나타낼 때는 수를 1개 이상 사용해야 한다.
+정수 n이 주어졌을 때, n을 1, 2, 3의 합으로 나타내는 방법의 수를 구하는 프로그램을 작성하시오.
+"""
+
+num = int(input())
+input_array = []
+dp = []
+for i in range(num):
+    input_array.append(int(input()))
+
+max_value = max(input_array)
+# print(max_value)
+
+for i in range(max_value+1):
+    if i == 0 or i == 1:
+        dp.append(1)
+    elif i == 2:
+        dp.append(2)
+    else:
+        dp.append(dp[i-1] + dp[i-2] + dp[i-3])
+
+for i in input_array:
+    print(dp[i])
+
+
